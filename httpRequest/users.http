@@ -1,0 +1,13 @@
+### GET USER BY USERNAME
+GET {{API_URL}}/users
+
+### REGISTER USER
+POST {{API_URL}}/users/register
+Content-Type: application/json
+
+{
+  "username": "gabriel",
+  "password": "admin"
+}
+
+
