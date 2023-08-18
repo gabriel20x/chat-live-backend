@@ -78,9 +78,33 @@ Por ahora estará vacia, ya que no hemos declarado ningun controlador y/o esquem
 
 ### 4. Gateway para Socket IO 
 
+Ahora debemos de crear una puerta de enlace para que el cliente y el servidor tengan una comunicación continua en base a subscripciones y eventos de escucha.
+Para esto vamos a utilizar Socket IO.
+
+Por defecto Nestjs ya trae el paquete de websockets, y de este vamos a utilizar el ciclo de vida para detectar el funcionamiento de la conexion.
+
+Junto con postman, creamos un entorno de trabajo y realizamos nuestra conexion al websocket y declaramos los eventos de escucha. 
+
+Para emitir un mensaje desde el servidor debemos de establecer en el servidor en el cual esta trabajando nuestro gateway, y de ahi emitir los eventos, en los diferentes ciclos.
+
+Ahora que probamos que el websocket tiene conexion, procedemos a establecer una entity para nuestros mensajes, que es lo que llegara desde nuestro cliente.
+
+Luego de establecido debemos de crear una subscricion al evento que va emitir el cliente, en este caso lo llamaremos 'event_message', 
+Creamos una funcion la cual va al momento de recibir ese evento va a emitir a todos los clientes subscritos el evento 'new_message' y como payload enviara el mensaje que envio el primer cliente.
+
 ---
 
 ### 5. Database Connection y CRUD Mensajes
+
+Ya que estamos recibiendo el mensaje enviado por los clientes, ahora debemos de guardar los mensajes en la base de datos. 
+Para que la conversacion no se pierda, y que los nuevos clientes puedan ver el historial del chat del pasado.
+
+Debemos entonces crear la funcion getAllMessages() y luego createMessage(message),
+
+la funcion de obtener los mensajes sera una peticion get que puede realizar el cliente, sin embargo la funcion de createMessage debe estar ligada al evento de un nuevo mensaje,
+de esta manera nos aseguramos de que cada vez que se envie un mensaje nuevo, este se guarde primero en la base de datos y luego se envie a todos los clientes.
+
+
 
 --- 
 

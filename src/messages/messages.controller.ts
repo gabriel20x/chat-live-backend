@@ -10,7 +10,7 @@ export class MessagesController {
   // CRUD
 
   @Get()
-  getAllUsers() {
+  getAllMessages() {
     return this.messagesService.getAllMessages();
   }
 }

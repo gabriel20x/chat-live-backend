@@ -8,7 +8,7 @@ class MessageEntity {
   @PrimaryGeneratedColumn('uuid')
   public id?: string;
 
-  @ApiProperty({ description: 'id as uuid', type: 'string' })
+  @ApiProperty({ description: 'Mensaje de un usuario', type: 'string' })
   @Column()
   public message: string;
 }

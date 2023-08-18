@@ -1,4 +1,5 @@
 import {
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -35,8 +36,8 @@ export class ChatGateway
   }
 
   @SubscribeMessage('event_message')
-  async handleIncommingMessage(client: Socket, payload: MessageDto) {
-    const newMessage = await this.messagesService.createMessage(payload);
+  async handleIncommingMessage(@MessageBody() message: MessageDto) {
+    const newMessage = await this.messagesService.createMessage(message);
     this.server.emit('new_message', newMessage);
   }
 }
