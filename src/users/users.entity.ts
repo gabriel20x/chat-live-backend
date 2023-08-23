@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import MessageEntity from '../messages/messages.entity';
 
 @Entity('users')
 class UserEntity {
@@ -10,6 +11,10 @@ class UserEntity {
   @ApiProperty({ description: 'username', type: 'string' })
   @Column({ unique: true })
   public username: string;
+
+  @ApiProperty({ description: 'messages of the user', type: [MessageEntity] })
+  @OneToMany(() => MessageEntity, (message) => message.sender)
+  public messages: MessageEntity[];
 
   @ApiHideProperty()
   @Column({ select: false })

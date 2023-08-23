@@ -6,6 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Chat Live Documentation')
     .setDescription('Documentation for the chat live backend')
     .setVersion('1.0')
