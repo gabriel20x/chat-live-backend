@@ -31,7 +31,6 @@ export class UsersService {
       .where({ username })
       .addSelect('user.password')
       .getOne();
-    console.log(user, username);
     if (user) {
       return user;
     }

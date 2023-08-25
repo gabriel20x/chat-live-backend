@@ -15,7 +15,12 @@ export class MessagesService {
   ) {}
 
   async getAllMessages() {
-    const messages = await this.messagesRepository.find();
+    const messages = await this.messagesRepository.find({
+      relations: {
+        sender: true,
+      },
+      select: { sender: { id: true, messages: false, username: true } },
+    });
     if (messages) {
       return messages;
     }

@@ -42,7 +42,8 @@ export class ChatGateway
   async handleConnection(socket: Socket) {
     try {
       // Extraemos del socket del cliente el JWT y lo desencriptamos.
-      const [, token] = socket.handshake.headers['authorization'].split(' ');
+      const authHeader = socket.handshake.headers.authorization;
+      const [, token] = authHeader ? authHeader.split(' ') : [null, ''];
       const { id: userId } = await this.authService.verifyJwt(
         socket.handshake.auth.Authorization || token,
       );
@@ -59,8 +60,9 @@ export class ChatGateway
       this.users[userId].push(socket.id);
       // Para el cliente que se conecto se emitira a el mismo siempre la lista completa de los usuarios
       socket.emit('users_in_line', Object.keys(this.users));
-    } catch {
+    } catch (error) {
       // Si ocurre un error desconectamos el cliente del servidor.
+      console.error(error);
       return this.disconnect(socket);
     }
   }
@@ -70,13 +72,15 @@ export class ChatGateway
     if (_.isEmpty(this.users)) return;
     // Obtenemos el id del usuario que se esta desconectado, y eliminamos de su array el socket que se esta desconectando.
     const userKey = _.findKey(this.users, (ids: [string]) =>
-      _.remove(ids, (id) => id === socket.id),
+      _.some(ids, (id) => id === socket.id),
     );
+    if (!userKey) return;
+    _.remove(this.users[userKey], (id) => id === socket.id);
     // Si el usuario ha desconectado todos los sockets asignados a él, se elimina el id del usuario de la lista
     // y emitimos que el usuario se ha desconectado completamente.
     if (_.isEmpty(this.users[userKey])) {
       delete this.users[userKey];
-      return this.server.emit('desconnection', socket.id);
+      return this.server.emit('desconnection', userKey);
     }
     // Si el usuario aún tiene un socket asignado, no se notifica que se ha desconectado.
   }
@@ -88,7 +92,8 @@ export class ChatGateway
     @ConnectedSocket() socket: Socket,
   ) {
     try {
-      const [, token] = socket.handshake.headers['authorization'].split(' ');
+      const authHeader = socket.handshake.headers.authorization;
+      const [, token] = authHeader ? authHeader.split(' ') : [null, ''];
       const { id: userId } = await this.authService.verifyJwt(
         socket.handshake.auth.Authorization || token,
       );
